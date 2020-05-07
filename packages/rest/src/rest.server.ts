@@ -12,6 +12,7 @@ import {
   ContextObserver,
   CoreBindings,
   createBindingFromClass,
+  extensionFor,
   filterByKey,
   filterByTag,
   inject,
@@ -250,7 +251,12 @@ export class RestServer extends BaseMiddlewareRegistry
       injectConfiguration: false,
       key: 'middleware.cors',
       group: 'cors',
-    });
+    }).apply(
+      extensionFor(
+        RestTags.REST_MIDDLEWARE_CHAIN,
+        RestTags.ACTION_MIDDLEWARE_CHAIN,
+      ),
+    );
 
     // Set up endpoints for OpenAPI spec/ui
     this._setupOpenApiSpecEndpoints();
@@ -324,7 +330,13 @@ export class RestServer extends BaseMiddlewareRegistry
     );
     this.expressMiddleware('middleware.apiSpec.defaults', router, {
       group: 'apiSpec',
-    });
+      upstreamGroups: 'cors',
+    }).apply(
+      extensionFor(
+        RestTags.REST_MIDDLEWARE_CHAIN,
+        RestTags.ACTION_MIDDLEWARE_CHAIN,
+      ),
+    );
   }
 
   /**
