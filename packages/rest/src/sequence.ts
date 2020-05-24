@@ -142,11 +142,12 @@ export class MiddlewareSequence implements SequenceHandler {
       // default
       'middleware',
 
+      // rest
+      'findRoute',
+
       // auth
       'authentication',
 
-      // rest
-      'findRoute',
       'parseParams',
       'invokeMethod',
     ],
