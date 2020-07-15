@@ -208,9 +208,33 @@ A full list of validation keywords could be found in the
 
 ##### Custom Error Messages
 
-You can also specify custom error messages for the JSON schema validation rules
-in the model property decorator. The messages are added in field called
-`errorMessage` inside `jsonSchema` like:
+You can also specify the validation rules in the `jsonSchema` field of the
+property option and configure them with custom error messages.
+
+For this to work, you should first create a `RequestBodyValidationOptions`
+object and bind it to `RestBindings.REQUEST_BODY_PARSER_OPTIONS` as shown in the
+example below.
+
+```ts
+import {RestApplication, RestBindings, RequestBodyValidationOptions} from '@loopback/rest';
+...
+export class MApplication extends BootMixin(
+  ServiceMixin(RepositoryMixin(RestApplication)),
+) {
+  constructor(options: ApplicationConfig = {}) {
+    super(options);
+
+    const validationOptions: RequestBodyValidationOptions = {
+      $data: true,
+      ajvKeywords: true,
+      ajvErrors: true
+    };
+
+    this.bind(RestBindings.REQUEST_BODY_PARSER_OPTIONS).to({validation: validationOptions});
+    ...
+```
+
+The validation rules and custom error messages are configured this way.
 
 ```ts
 @model()
@@ -219,17 +243,24 @@ class Product extends Entity {
     name: 'name',
     description: "The product's common name.",
     type: 'string',
-    // Specify the JSON validation rules here
+    // JSON validation rules
     jsonSchema: {
-      maxLength: 30,
       minLength: 10,
-      errorMessage:
-        'name must be at least 10 characters and maximum 30 characters',
+      maxLength: 30,
+      errorMessage: {
+        // Corresponding error messages
+        minLength: 'name should be at least 10 characters',
+        maxLength: 'name should not exceed 30 characters',
+      },
     },
   })
   public name: string;
 }
 ```
+
+Note: You can also specify a string instead of an object as a value for
+`errorMessage`. In this case the same string will be used as the error message
+for all the errors.
 
 A full list of options & usage scenarios could be found in the
 [documentation of AJV errors](https://github.com/epoberezkin/ajv-errors).

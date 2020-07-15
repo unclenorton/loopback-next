@@ -918,10 +918,35 @@ If the `jsonSchema` field is missing, you will get an error saying
 
 > You must provide the "jsonSchema" field when define a nested array property'
 
-### Validation Rules
+### Custom Validation Rules and Error Messages
 
-You can also specify the validation rules in the field `jsonSchema`. For
-example:
+You can also specify the validation rules in the `jsonSchema` field of the
+property option and configure them with custom error messages.
+
+For this to work, you should first create a `RequestBodyValidationOptions`
+object and bind it to `RestBindings.REQUEST_BODY_PARSER_OPTIONS` as shown in the
+example below.
+
+```ts
+import {RestApplication, RestBindings, RequestBodyValidationOptions} from '@loopback/rest';
+...
+export class MApplication extends BootMixin(
+  ServiceMixin(RepositoryMixin(RestApplication)),
+) {
+  constructor(options: ApplicationConfig = {}) {
+    super(options);
+
+    const validationOptions: RequestBodyValidationOptions = {
+      $data: true,
+      ajvKeywords: true,
+      ajvErrors: true
+    };
+
+    this.bind(RestBindings.REQUEST_BODY_PARSER_OPTIONS).to({validation: validationOptions});
+    ...
+```
+
+The validation rules and custom error messages are configured this way.
 
 ```ts
 @model()
@@ -930,17 +955,24 @@ class Product extends Entity {
     name: 'name',
     description: "The product's common name.",
     type: 'string',
-    // Specify the JSON validation rules here
+    // JSON validation rules
     jsonSchema: {
-      maxLength: 30,
       minLength: 10,
-      errorMessage:
-        'name must be at least 10 characters and maximum 30 characters',
+      maxLength: 30,
+      errorMessage: {
+        // Corresponding error messages
+        minLength: 'name should be at least 10 characters',
+        maxLength: 'name should not exceed 30 characters',
+      },
     },
   })
   public name: string;
 }
 ```
+
+Note: You can also specify a string instead of an object as a value for
+`errorMessage`. In this case the same string will be used as the error message
+for all the errors.
 
 Check out the documentation of
 [Parsing requests](Parsing-requests.md#request-body) to see how to do it in
