@@ -9,7 +9,7 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "acceptance": "lb-mocha \"dist/__tests__/acceptance/**/*.js\"",
-    "build": "lb-tsc",
+    "build": "lb-tsc --copy-resources",
     "clean": "lb-clean loopback-graphql*.tgz dist *.tsbuildinfo package",
     "pretest": "npm run build",
     "integration": "lb-mocha \"dist/__tests__/integration/**/*.js\"",
