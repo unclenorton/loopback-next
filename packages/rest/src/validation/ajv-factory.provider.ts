@@ -19,6 +19,7 @@ import {
   AjvKeyword,
   RequestBodyValidationOptions,
 } from '../types';
+import {defaultValidationOptions} from './default-options';
 const debug = debugModule('loopback:rest:ajv');
 
 const ajvKeywords = require('ajv-keywords');
@@ -34,7 +35,7 @@ export class AjvFactoryProvider implements Provider<AjvFactory> {
       RestBindings.REQUEST_BODY_PARSER_OPTIONS.deepProperty('validation'),
       {optional: true},
     )
-    private options: RequestBodyValidationOptions = {},
+    private options: RequestBodyValidationOptions = defaultValidationOptions,
   ) {}
 
   @inject(filterByTag(RestTags.AJV_KEYWORD))

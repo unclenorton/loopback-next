@@ -21,6 +21,7 @@ import {
   Request,
   RequestBodyValidationOptions,
 } from './types';
+import {defaultValidationOptions} from './validation/default-options';
 import {validateRequestBody} from './validation/request-body.validator';
 const debug = debugFactory('loopback:rest:parser');
 
@@ -35,7 +36,7 @@ export async function parseOperationArgs(
   request: Request,
   route: ResolvedRoute,
   requestBodyParser: RequestBodyParser = new RequestBodyParser(),
-  options: RequestBodyValidationOptions = {},
+  options: RequestBodyValidationOptions = defaultValidationOptions,
 ): Promise<OperationArgs> {
   debug('Parsing operation arguments for route %s', route.describe());
   const operationSpec = route.spec;
@@ -60,7 +61,7 @@ async function buildOperationArguments(
   pathParams: PathParameterValues,
   body: RequestBody,
   globalSchemas: SchemasObject,
-  options: RequestBodyValidationOptions = {},
+  options: RequestBodyValidationOptions = defaultValidationOptions,
 ): Promise<OperationArgs> {
   let requestBodyIndex = -1;
   if (operationSpec.requestBody) {

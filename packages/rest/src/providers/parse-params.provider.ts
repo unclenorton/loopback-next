@@ -14,6 +14,7 @@ import {
   Request,
   RequestBodyValidationOptions,
 } from '../types';
+import {defaultValidationOptions} from '../validation/default-options';
 /**
  * Provides the function for parsing args in requests at runtime.
  *
@@ -27,7 +28,7 @@ export class ParseParamsProvider implements Provider<ParseParams> {
       RestBindings.REQUEST_BODY_PARSER_OPTIONS.deepProperty('validation'),
       {optional: true},
     )
-    private validationOptions: RequestBodyValidationOptions = {},
+    private validationOptions: RequestBodyValidationOptions = defaultValidationOptions,
     @inject(RestBindings.AJV_FACTORY, {optional: true})
     private ajvFactory?: AjvFactory,
   ) {}
