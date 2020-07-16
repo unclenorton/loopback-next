@@ -74,7 +74,7 @@ export class MySequence implements SequenceHandler {
     // 2. customize error for particular endpoint
     if (context.request.url === '/coffee-shops') {
       // if this is a validation error
-      if (err.statusCode === 422) {
+      if (err.statusCode === 422 && context.request.method === 'PATCH') {
         const customizedMessage = 'My customized validation error message';
 
         let customizedProps = {};

@@ -32,24 +32,63 @@ describe('validate properties', () => {
   });
 
   it('fails when creating a CoffeeShop with the city name exceeds length limit', async () => {
-    const invalidCityNameCS = validCoffeeShop;
+    const invalidCityNameCS = {...validCoffeeShop};
     invalidCityNameCS.city = 'Tooooooooooronto';
-    await client.post('/coffee-shops').send(invalidCityNameCS).expect(422);
+    const response = await client
+      .post('/coffee-shops')
+      .send(invalidCityNameCS)
+      .expect(422);
+    expect(response.body.error.details.length).to.equal(1);
+    expect(response.body.error.details[0].message).to.equal(
+      'City name should be between 5 and 10 characters',
+    );
   });
 
   it('fails when creating a CoffeeShop with an invalid phone number', async () => {
-    const invalidPhoneNumCS = validCoffeeShop;
+    const invalidPhoneNumCS = {...validCoffeeShop};
     invalidPhoneNumCS.phoneNum = '1111111111';
-    await client.post('/coffee-shops').send(invalidPhoneNumCS).expect(422);
+    const response = await client
+      .post('/coffee-shops')
+      .send(invalidPhoneNumCS)
+      .expect(422);
+    expect(response.body.error.details.length).to.equal(1);
+    expect(response.body.error.details[0].message).to.equal(
+      'Invalid phone number',
+    );
   });
 
   it('fails when creating a CoffeeShop with the capacity exceeds limit', async () => {
-    const invalidCapacityCS = validCoffeeShop;
+    const invalidCapacityCS = {...validCoffeeShop};
     invalidCapacityCS.capacity = 10000;
-    await client.post('/coffee-shops').send(invalidCapacityCS).expect(422);
+    const response = await client
+      .post('/coffee-shops')
+      .send(invalidCapacityCS)
+      .expect(422);
+    expect(response.body.error.details.length).to.equal(1);
+    expect(response.body.error.details[0].message).to.equal(
+      'Capacity cannot exceed 100',
+    );
   });
 
-  it('fails when creating a CoffeeShop with an invalid area code', async () => {
+  it('should report all validation errors', async () => {
+    const invalidCapacityTypeCS = {
+      city: '',
+      phoneNum: '',
+      capacity: '',
+      rating: '',
+    };
+    const response = await client
+      .post('/coffee-shops')
+      .send(invalidCapacityTypeCS)
+      .expect(422);
+
+    expect(response.body.error.message).to.equal(
+      'The request body is invalid. See error object `details` property for more info.',
+    );
+    expect(response.body.error.details.length).to.equal(4);
+  });
+
+  it('should apply controller-level custom validations', async () => {
     const invalidAreaCodeCS = {
       city: 'Toronto',
       phoneNum: '999-111-1111',
@@ -62,14 +101,14 @@ describe('validate properties', () => {
     );
   });
 
-  it('fails when creating a CoffeeShop with an invalid type', async () => {
+  it('should use sequence-level custom error handler', async () => {
     const invalidCapacityTypeCS = {
       city: 'Toronto',
       phoneNum: '416-111-1111',
       capacity: '10',
     };
     const response = await client
-      .post('/coffee-shops')
+      .patch('/coffee-shops')
       .send(invalidCapacityTypeCS)
       .expect(422);
 

@@ -19,12 +19,10 @@ instance with the in-memory storage.
    @property({
     type: 'string',
     required: true,
-    // --- add jsonSchema -----
     jsonSchema: {
       maxLength: 10,
       minLength: 1,
     },
-    // ------------------------
    })
    city: string;
    ```
