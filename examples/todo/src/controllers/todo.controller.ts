@@ -14,7 +14,7 @@ import {
   patch,
   post,
   put,
-  requestBody,
+  requestBody
 } from '@loopback/rest';
 import {Todo} from '../models';
 import {TodoRepository} from '../repositories';
@@ -92,7 +92,9 @@ export class TodoController {
     @param.filter(Todo)
     filter?: Filter<Todo>,
   ): Promise<Todo[]> {
-    return this.todoRepository.find(filter);
+    return this.todoRepository.find({
+      where: {tags: 'someValue'}
+    });
   }
 
   @put('/todos/{id}', {

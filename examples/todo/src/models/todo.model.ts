@@ -42,10 +42,11 @@ export class Todo extends Entity {
   remindAtGeo?: string; // latitude,longitude
 
   @property({
-    type: 'any',
+    type: 'array',
+    itemType: 'string'
   })
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  tag?: any;
+  tags?: string[];
 
   constructor(data?: Partial<Todo>) {
     super(data);
