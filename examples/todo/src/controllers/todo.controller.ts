@@ -92,8 +92,11 @@ export class TodoController {
     @param.filter(Todo)
     filter?: Filter<Todo>,
   ): Promise<Todo[]> {
-    return this.todoRepository.find({
+    const extraFilter: Filter<Todo> = {
       where: {tags: 'someValue'}
+    }
+    return this.todoRepository.find({
+      ...extraFilter
     });
   }
 
